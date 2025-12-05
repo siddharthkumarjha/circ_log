@@ -1,7 +1,6 @@
 #pragma once
 
 #include "fmt/base.h"
-#include "fmt/format.h"
 #include "result/result.hpp"
 #include <memory>
 

@@ -1,26 +1,18 @@
 #include "circ_q.hpp"
+#include "conversion-helpers.hpp"
 #include "data_type.hpp"
 #include "fmt/base.h"
 #include "fmt/chrono.h"
 #include "mmap_wrapper.hpp"
 #include "result/result.hpp"
-#include <chrono>
 #include <memory>
 
 using namespace result_type;
 using namespace std::literals;
 
-static inline constexpr auto to_chrono_ms(std::chrono::system_clock::time_point tp) -> std::chrono::milliseconds
-{
-    return std::chrono::duration_cast<std::chrono::milliseconds>(tp.time_since_epoch());
-}
-
-template <typename Rep, typename Period>
-static inline constexpr auto to_chrono_ms(std::chrono::duration<Rep, Period> dur) -> std::chrono::milliseconds
-{
-    return std::chrono::duration_cast<std::chrono::milliseconds>(dur);
-}
-
+// Total records to store
+// 3 * 24 * 60 * 60
+// 259200
 auto main_res() -> Result<void, std::string>
 {
     auto cur_epoch_ms = to_chrono_ms(std::chrono::system_clock::now());
@@ -36,8 +28,7 @@ auto main_res() -> Result<void, std::string>
 
     auto cur_tp = std::chrono::system_clock::now();
     fmt::println("Writing tp: {}", cur_tp);
-    UTCTime utc  = UTCTime::from_tp(cur_tp).serialize();
-    *mmap_handle = utc;
+    *mmap_handle = UTCTime::from_tp(cur_tp).serialize();
 
     return Ok();
 }

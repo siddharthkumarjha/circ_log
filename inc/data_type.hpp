@@ -64,7 +64,21 @@ struct UTCTime
         };
     }
 
-    UTCTime serialize() const
+    UTCTime serialize() &&
+    {
+        this->year_hi = to_bcd(this->year_hi);
+        this->year_lo = to_bcd(this->year_lo);
+
+        this->month   = to_bcd(this->month);
+        this->day     = to_bcd(this->day);
+        this->hours   = to_bcd(this->hours);
+        this->minutes = to_bcd(this->minutes);
+        this->seconds = to_bcd(this->seconds);
+
+        return *this;
+    }
+
+    UTCTime serialize() const &
     {
         UTCTime ser_time;
 

@@ -2,6 +2,7 @@
 
 #include "result/result.hpp"
 #include "source-location.hpp"
+#include <chrono>
 
 template <typename result_tp>
     requires(result_type::helper::is_result_type<result_tp>)
@@ -18,4 +19,15 @@ static inline constexpr auto map_to_str(result_tp &&R, source_location &&err_loc
             oss << loc << err;
             return std::move(oss).str();
         });
+}
+
+static inline constexpr auto to_chrono_ms(std::chrono::system_clock::time_point tp) -> std::chrono::milliseconds
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(tp.time_since_epoch());
+}
+
+template <typename Rep, typename Period>
+static inline constexpr auto to_chrono_ms(std::chrono::duration<Rep, Period> dur) -> std::chrono::milliseconds
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(dur);
 }
