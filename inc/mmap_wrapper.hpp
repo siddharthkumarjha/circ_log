@@ -100,8 +100,6 @@ public:
         return oss;
     }
 
-    friend auto format_as(unique_ptr ptr) { return fmt::format("mmap@{}", static_cast<void *>(ptr.get())); }
-
     mmap_wrapper()                                = delete;
     mmap_wrapper(const mmap_wrapper &)            = delete;
     mmap_wrapper &operator=(const mmap_wrapper &) = delete;

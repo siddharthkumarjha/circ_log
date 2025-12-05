@@ -31,13 +31,16 @@ public:
     circ_q() = delete;
     circ_q(pointer &&array, size_t const cap) : capacity{cap}, data{std::move(array)} {}
 
+    inline bool is_full() const noexcept { return (size == capacity); }
+    inline bool is_empty() const noexcept { return (size == 0); }
+
     Result<void, std::string_view> push(cref val)
     {
         if (data == nullptr)
         {
             return Err("data is a `nullptr`"sv);
         }
-        if (size == capacity)
+        if (is_full())
         {
             return Err("capacity reached! overflow detected"sv);
         }
@@ -54,7 +57,7 @@ public:
         {
             return Err("data is a `nullptr`"sv);
         }
-        if (size == 0)
+        if (is_empty())
         {
             return Err("no elements to pop from buffer"sv);
         }
