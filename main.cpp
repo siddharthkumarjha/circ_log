@@ -21,14 +21,18 @@ auto main_res() -> Result<void, std::string>
     auto can_info     = CANInfo::new_instance(0x2d1, arr, cur_epoch_ms + 10ms, cur_epoch_ms);
     fmt::println("can_info: {}", can_info);
 
-    std::unique_ptr mmap_handle = TRY_OK(mmap_wrapper<UTCTime>::new_instance("./test.dat"));
+    constexpr size_t buf_len = 3;
+    std::unique_ptr mmap_handle =
+        TRY_OK(mmap_wrapper<UTCTime[]>::new_instance("./test.dat", 0, sizeof(UTCTime) * buf_len));
     fmt::println("mmap handle: {}", mmap_handle);
 
-    fmt::println("read tp: {}", mmap_handle->deserialize());
-
-    auto cur_tp = std::chrono::system_clock::now();
-    fmt::println("Writing tp: {}", cur_tp);
-    *mmap_handle = UTCTime::from_tp(cur_tp).serialize();
+    for (size_t i = 0; i < buf_len; ++i)
+    {
+        auto cur_tp = std::chrono::system_clock::now();
+        fmt::println("read tp: {}", mmap_handle[i].deserialize());
+        fmt::println("Writing tp: {}", cur_tp);
+        mmap_handle[i] = UTCTime::from_tp(cur_tp).serialize();
+    }
 
     return Ok();
 }

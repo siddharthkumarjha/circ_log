@@ -41,7 +41,7 @@ private:
     struct deleter
     {
         int fd_      = -1;
-        size_t size_ = sizeof(T);
+        size_t size_ = 0;
 
         void operator()(void *fptr)
         {
@@ -63,6 +63,15 @@ private:
                 close(fd_);
             }
         }
+    };
+
+    template <typename Tp> struct ptr_cast
+    {
+        Tp *operator()(void *fptr) { return static_cast<Tp *>(fptr); }
+    };
+    template <typename Tp> struct ptr_cast<Tp[]>
+    {
+        Tp *operator()(void *fptr) { return static_cast<Tp *>(fptr); }
     };
 
 public:
@@ -90,7 +99,7 @@ public:
             close(fd);
             return Err(get_err_msg());
         }
-        return Ok(unique_ptr{static_cast<T *>(fptr), deleter{.fd_ = fd, .size_ = size}});
+        return Ok(unique_ptr(ptr_cast<T>()(fptr), deleter{.fd_ = fd, .size_ = size}));
     }
 
     friend std::ostream &operator<<(std::ostream &oss, unique_ptr const &ptr)
