@@ -45,7 +45,7 @@ private:
     struct deleter
     {
         int fd_      = -1;
-        size_t size_ = 0;
+        size_t size_ = sizeof(std::remove_extent_t<T>);
 
         void operator()(void *fptr)
         {
@@ -82,10 +82,11 @@ public:
     using unique_ptr = std::unique_ptr<T, deleter>;
 
 public:
-    static auto new_instance(std::string_view const file_name, off_t const offset = 0, size_t const size = sizeof(T))
+    static auto new_instance(std::string_view const file_name, off_t const offset = 0, size_t const nelem = 1)
         -> Result<unique_ptr, std::string>
     {
-        int fd = open(file_name.data(), O_RDWR | O_CREAT | O_CLOEXEC | O_NOFOLLOW, 0644);
+        size_t const size = sizeof(std::remove_extent_t<T>) * nelem;
+        int const fd      = open(file_name.data(), O_RDWR | O_CREAT | O_CLOEXEC | O_NOFOLLOW, 0644);
         if (fd < 0)
         {
             return Err(get_err_msg());

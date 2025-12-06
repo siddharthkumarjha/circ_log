@@ -21,9 +21,8 @@ auto main_res() -> Result<void, std::string>
     auto can_info     = CANInfo::new_instance(0x2d1, arr, cur_epoch_ms + 10ms, cur_epoch_ms);
     fmt::println("can_info: {}", can_info);
 
-    constexpr size_t buf_len = 3;
-    std::unique_ptr mmap_handle =
-        TRY_OK(mmap_wrapper<UTCTime[]>::new_instance("./test.dat", 0, sizeof(UTCTime) * buf_len));
+    constexpr size_t buf_len    = 3;
+    std::unique_ptr mmap_handle = TRY_OK(mmap_wrapper<UTCTime[]>::new_instance("./test.dat", 0, buf_len));
     fmt::println("mmap handle: {}", mmap_handle);
 
     for (size_t i = 0; i < buf_len; ++i)
