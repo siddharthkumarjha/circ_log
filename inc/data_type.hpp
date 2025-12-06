@@ -51,16 +51,16 @@ struct UTCTime
 
     static UTCTime from_tp(std::chrono::system_clock::time_point const tp)
     {
-        auto absl_tp = absl::FromChrono(tp).In(absl::UTCTimeZone());
+        auto civil_tp = absl::UTCTimeZone().At(absl::FromChrono(tp)).cs;
         return UTCTime{
-            .year_hi = ::detail::get_hi_digits(static_cast<uint16_t>(absl_tp.year)),
-            .year_lo = ::detail::get_lo_digits(static_cast<uint16_t>(absl_tp.year)),
+            .year_hi = ::detail::get_hi_digits(static_cast<uint16_t>(civil_tp.year())),
+            .year_lo = ::detail::get_lo_digits(static_cast<uint16_t>(civil_tp.year())),
 
-            .month   = static_cast<uint8_t>(absl_tp.month),
-            .day     = static_cast<uint8_t>(absl_tp.day),
-            .hours   = static_cast<uint8_t>(absl_tp.hour),
-            .minutes = static_cast<uint8_t>(absl_tp.minute),
-            .seconds = static_cast<uint8_t>(absl_tp.second),
+            .month   = static_cast<uint8_t>(civil_tp.month()),
+            .day     = static_cast<uint8_t>(civil_tp.day()),
+            .hours   = static_cast<uint8_t>(civil_tp.hour()),
+            .minutes = static_cast<uint8_t>(civil_tp.minute()),
+            .seconds = static_cast<uint8_t>(civil_tp.second()),
         };
     }
 
