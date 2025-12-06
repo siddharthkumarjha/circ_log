@@ -39,15 +39,15 @@ auto main_res() -> Result<void, std::string>
 
 int main(void)
 {
-    main_res().match(
-        []() -> void
+    return main_res().match(
+        []()
         {
             fmt::println("exiting the app...");
+            return 0;
         },
-        [](std::string_view err) -> void
+        [](std::string_view err)
         {
             fmt::println("err: {}", err);
+            return 1;
         });
-
-    return 0;
 }

@@ -16,7 +16,11 @@ extern "C"
 using namespace result_type;
 
 template <typename T>
-concept mmap_safe = std::is_trivially_copyable_v<T>;
+concept plain_or_unbound_arr =
+    !std::is_reference_v<T> && !std::is_pointer_v<T> && (std::is_unbounded_array_v<T> || (!std::is_array_v<T>));
+
+template <typename T>
+concept mmap_safe = std::is_trivially_copyable_v<T> && plain_or_unbound_arr<T>;
 
 static inline std::string get_err_msg(int const err_code = errno)
 {
